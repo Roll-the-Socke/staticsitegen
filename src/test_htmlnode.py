@@ -88,3 +88,6 @@ class TestParentNode(unittest.TestCase):
             assert False, "Expected ValueError for missing children"
         except ValueError as e:
             assert str(e) == "mhh mhh children is missing"
+
+if __name__ == "__main__":
+    unittest.main()
