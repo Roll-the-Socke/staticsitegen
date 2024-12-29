@@ -1,5 +1,5 @@
 import unittest
-from htmlnode import HTMLNode, LeafNode
+from htmlnode import HTMLNode, LeafNode, ParentNode
 
 
 class TestHTMLNode(unittest.TestCase):
@@ -49,3 +49,42 @@ class TestLeafNode(unittest.TestCase):
             self.assertRaises (False, "Should have raised ValueError")
         except ValueError:
             pass
+
+class TestParentNode(unittest.TestCase):
+    def test_simple(self):
+        leaf = LeafNode("span", "Hello")
+        assert leaf.to_html() == "<span>Hello</span>"
+
+    def test_parent_multipleleaf(self):
+        parent = ParentNode(
+            "div",
+            [
+                LeafNode("p", "Paragraph 1"),
+                LeafNode("p", "Paragraph 2")
+            ]
+        )
+        assert parent.to_html() == "<div><p>Paragraph 1</p><p>Paragraph 2</p></div>"
+
+    def test_nested_parents(self):
+        nested_parent = ParentNode(
+            "ul", 
+            [
+                ParentNode("li", [LeafNode(None, "Item 1")]),
+                ParentNode("li", [LeafNode(None, "Item 2")])
+            ]
+        )
+        assert nested_parent.to_html() == "<ul><li>Item 1</li><li>Item 2</li></ul>"
+
+    def test_missing_parenttag(self):
+        try:
+            ParentNode(None, [LeafNode("b", "Text")]).to_html()
+            assert False, "Expected ValueError for missing tag"
+        except ValueError as e:
+            assert str(e) == "mhh mhh tag is missing"
+
+    def test_empty_children(self):
+        try:
+            ParentNode("div", []).to_html()
+            assert False, "Expected ValueError for missing children"
+        except ValueError as e:
+            assert str(e) == "mhh mhh children is missing"
