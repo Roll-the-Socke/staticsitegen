@@ -33,13 +33,13 @@ class TestHTMLNode(unittest.TestCase):
 class TestLeafNode(unittest.TestCase):
     def test_noprops(self):
     # Test a basic leaf node with tag and value
-        node = LeafNode("p", "Hello, world!")
-        self.assertEqual (node.to_html() == "<p>Hello, world!</p>")
+        node = LeafNode("p", "Hello, world!", None)
+        self.assertEqual (node.to_html(), "<p>Hello, world!</p>")
 
     def test_notag(self):
     # Test a text-only node (no tag)
-        text_node = LeafNode(None, "Just some text")
-        self.assertEqual (text_node.to_html() == "Just some text")
+        text_node = LeafNode(None, "Just some text", None)
+        self.assertEqual (text_node.to_html(), "Just some text")
 
     def test_novalue(self):
         try:
