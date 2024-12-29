@@ -1,5 +1,5 @@
 import unittest
-from htmlnode import HTMLNode
+from htmlnode import HTMLNode, LeafNode
 
 
 class TestHTMLNode(unittest.TestCase):
@@ -29,3 +29,23 @@ class TestHTMLNode(unittest.TestCase):
     # Check that the total number of attributes is correct
     # Each attribute starts with a space, so count the spaces
         self.assertEqual(result.count(' '), 3)
+
+class TestLeafNode(unittest.TestCase):
+    def test_noprops(self):
+    # Test a basic leaf node with tag and value
+        node = LeafNode("p", "Hello, world!")
+        self.assertEqual (node.to_html() == "<p>Hello, world!</p>")
+
+    def test_notag(self):
+    # Test a text-only node (no tag)
+        text_node = LeafNode(None, "Just some text")
+        self.assertEqual (text_node.to_html() == "Just some text")
+
+    def test_novalue(self):
+        try:
+    # This should raise a ValueError
+            bad_node = LeafNode("p", None)
+            bad_node.to_html()
+            self.assertRaises (False, "Should have raised ValueError")
+        except ValueError:
+            pass
