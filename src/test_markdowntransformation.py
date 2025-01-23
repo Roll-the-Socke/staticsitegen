@@ -7,6 +7,7 @@ from markdowntransformation import (
     extract_markdown_links,
     extract_markdown_images,
     markdown_to_blocks,
+    block_to_block_type,
 )
 
 from textnode import TextNode, TextType
@@ -205,6 +206,36 @@ class TestInlineMarkdown(unittest.TestCase):
         assert markdown_to_blocks("Block 1\n\n\n\nBlock 2") == ["Block 1", "Block 2"]
         #empty input
         assert markdown_to_blocks("") == []
+
+    def test_block_to_block_type(self):
+    # Test headings (1-6 #s)
+        assert block_to_block_type("# Heading 1") == "heading"
+        assert block_to_block_type("###### Heading 6") == "heading"
+        assert block_to_block_type("####### Too many") == "paragraph"
+        assert block_to_block_type("#No space") == "paragraph"
+
+    # Test code blocks
+        assert block_to_block_type("```\ndef hello():\n    pass\n```") == "code"
+        assert block_to_block_type("```\nsome code\n```") == "code"
+        assert block_to_block_type("``` not closed") == "paragraph"
+
+    # Test quote blocks
+        assert block_to_block_type("> A quote") == "quote"
+        assert block_to_block_type("> Line 1\n> Line 2") == "quote"
+        assert block_to_block_type(">No space") == "paragraph"
+        assert block_to_block_type("> Line 1\nNot a quote") == "paragraph"
+
+    # Test unordered lists
+        assert block_to_block_type("* Item 1\n* Item 2") == "unordered_list"
+        assert block_to_block_type("- Item 1\n- Item 2") == "unordered_list"
+        assert block_to_block_type("* Item 1\n- Item 2") == "unordered_list"
+        assert block_to_block_type("*No space") == "paragraph"
+
+    # Test ordered lists
+        assert block_to_block_type("1. First\n2. Second") == "ordered_list"
+        assert block_to_block_type("1. First") == "ordered_list"
+        assert block_to_block_type("2. Wrong start") == "paragraph"
+        assert block_to_block_type("1. First\n3. Third") == "paragraph"
 
 if __name__ == "__main__":
     unittest.main()

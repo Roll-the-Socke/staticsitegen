@@ -117,3 +117,32 @@ def markdown_to_blocks(markdown):
         block = "\n".join(current_block).strip()
         blocks.append(block)
     return blocks
+
+def block_to_block_type(block):
+    if re.match(r"^#{1,6}\s.+", block):
+        return "heading"
+    
+    if re.match(r"^```[\s\S]*```$", block):
+        return "code"
+    
+    lines = block.split('\n')
+    if lines[0].startswith('> '):
+        # If first line is a quote, ALL lines must be quotes
+        if not all(line.startswith('> ') for line in lines):
+            return "paragraph"
+        return "quote"
+    
+    if lines[0].startswith(('* ', '- ')):
+        if not all(line.startswith(('* ', '- ')) for line in lines):
+            return "paragraph"
+        return "unordered_list"
+    
+    if lines[0].startswith('1. '):
+        expected_number = 1
+        for line in lines:
+            if not line.startswith(f"{expected_number}. "):
+                return "paragraph"
+            expected_number += 1
+        return "ordered_list"
+    
+    return "paragraph"
