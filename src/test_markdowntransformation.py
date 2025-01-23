@@ -6,6 +6,7 @@ from markdowntransformation import (
     text_to_textnodes,
     extract_markdown_links,
     extract_markdown_images,
+    markdown_to_blocks,
 )
 
 from textnode import TextNode, TextType
@@ -191,6 +192,19 @@ class TestInlineMarkdown(unittest.TestCase):
             nodes,
         )
 
+    def test_markdown_to_blocks(self):
+        #single block
+        assert markdown_to_blocks("Hello world") == ["Hello world"]
+        #multiple blocks seperated by single empty line
+        assert markdown_to_blocks("Block 1\n\nBlock 2") == ["Block 1", "Block 2"]
+        #block with multiple lines
+        assert markdown_to_blocks("Line 1\nLine 2\nLine 3") == ["Line 1\nLine 2\nLine 3"]
+        #extra whitespace
+        assert markdown_to_blocks("  Block with space  ") == ["Block with space"]
+        #multiple empty lines
+        assert markdown_to_blocks("Block 1\n\n\n\nBlock 2") == ["Block 1", "Block 2"]
+        #empty input
+        assert markdown_to_blocks("") == []
 
 if __name__ == "__main__":
     unittest.main()

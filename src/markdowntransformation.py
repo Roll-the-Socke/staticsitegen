@@ -98,3 +98,22 @@ def extract_markdown_links(text):
     pattern = r"(?<!!)\[([^\[\]]*)\]\(([^\(\)]*)\)"
     matches = re.findall(pattern, text)
     return matches
+
+
+def markdown_to_blocks(markdown):
+    blocks = []
+    current_block = []
+    splitted = markdown.split("\n")
+    for line in splitted:
+        if line == "":
+            if current_block:
+                block = "\n".join(current_block).strip()
+                blocks.append(block)
+                current_block = []
+        else:
+            current_block.append(line)
+    
+    if current_block:
+        block = "\n".join(current_block).strip()
+        blocks.append(block)
+    return blocks
