@@ -9,6 +9,7 @@ from markdowntransformation import (
     markdown_to_blocks,
     block_to_block_type,
     markdown_to_html_node,
+    extract_title,
     block_type_paragraph,
     block_type_heading,
     block_type_code,
@@ -17,7 +18,7 @@ from markdowntransformation import (
     block_type_quote,
 )
 
-from textnode import TextNode, TextType
+from textnode import TextNode, TextType, text_node_to_html_node
 
 
 class TestInlineMarkdown(unittest.TestCase):
@@ -326,6 +327,42 @@ this is paragraph text
             html,
             "<div><blockquote>This is a blockquote block</blockquote><p>this is paragraph text</p></div>",
         )
+
+    def test_simple_title(self):
+        markdown = "# Hello World"
+        self.assertEqual(extract_title(markdown), "Hello World")
+    
+    def test_h2_should_fail(self):
+        markdown = "## Not a title"
+        with self.assertRaises(Exception):
+            extract_title(markdown)
+    
+    def test_no_title_should_fail(self):
+        markdown = "No title here"
+        with self.assertRaises(Exception):
+            extract_title(markdown)
+    
+    def test_title_with_surrounding_text(self):
+        markdown = "Some text\n# The Title\nMore text"
+        self.assertEqual(extract_title(markdown), "The Title")
+    
+    def test_title_with_hash_in_content(self):
+        markdown = "Some text\n# Title with # in it"
+        self.assertEqual(extract_title(markdown), "Title with # in it")
+
+    def test_link_text_node(self):
+    # Create a link text node and print its contents
+        text = "[link text](https://example.com)"
+        nodes = text_to_textnodes(text)
+        print("Text nodes:", nodes)  # See what nodes were created
+    
+        html_node = text_node_to_html_node(nodes[0])
+        print("Generated HTML:", html_node.to_html())  # See what HTML was generated
+        print("Node type:", type(html_node))  # Check the node type
+    
+        expected = '<a href="https://example.com">link text</a>'
+        print("Expected HTML:", expected)
+        assert html_node.to_html() == expected
 
 if __name__ == "__main__":
     unittest.main()
