@@ -27,11 +27,15 @@ class LeafNode(HTMLNode):
 
 
     def to_html(self):
-        if not self.value:
-            raise ValueError
+        
+        if self.value is None:
+            raise ValueError(f"Value is missing for leaf node: {self}")
+        if self.value is None:
+            raise ValueError(f"Value is missing for leaf node: {self}")
         if not self.tag:
             return f"{self.value}"
         return f'<{self.tag}{self.props_to_html()}>{self.value}</{self.tag}>'
+
     
 class ParentNode(HTMLNode):
     def __init__(self, tag, children, props=None):
@@ -46,5 +50,4 @@ class ParentNode(HTMLNode):
         for child in self.children:
             s += f"{child.to_html()}"
         return f"<{self.tag}>{s}</{self.tag}>"
-
         

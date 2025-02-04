@@ -1,7 +1,7 @@
 from textnode import *
 from htmlnode import *
 from markdowntransformation import *
-from generator import generate_page
+from generator import generate_page, generate_pages_recursive
 import os
 import shutil
 
@@ -38,13 +38,12 @@ def main():
     # Copy static files
     copy_static_to_public(static_dir, public_dir)
     
-    # Paths for generate_page
-    markdown_file = os.path.join(base_path, "content/index.md")
+    # Paths for generate_pages_recursive
+    content_dir = os.path.join(base_path, "content")  # Changed this to content directory
     template_file = os.path.join(base_path, "template.html")
-    output_file = os.path.join(public_dir, "index.html")
     
-    # Generate the HTML page
-    generate_page(markdown_file, template_file, output_file)
+    # Generate the HTML pages recursively
+    generate_pages_recursive(content_dir, template_file, public_dir)  # Changed parameters
 
         
 if __name__ == "__main__":
