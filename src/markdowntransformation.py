@@ -90,6 +90,7 @@ def split_nodes_link(old_nodes):
             if sections[0] != "":
                 new_nodes.append(TextNode(sections[0], TextType.TEXT))
             new_nodes.append(TextNode(link[0], TextType.LINK, link[1]))
+            print(f"Debug - New link node created: text='{link[0]}', url='{link[1]}'")
             original_text = sections[1]
         if original_text != "":
             new_nodes.append(TextNode(original_text, TextType.TEXT))
